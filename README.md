@@ -31,7 +31,7 @@ Take a look at your results and analyse them:
 
 For 2D data it is possible to directly visualize how a classifier divides the plane into classes. Luckily, scikit-learn provides such a ``DecisionBoundaryDisplay`` for its estimators. Like in the previous exercise, we will create decision trees and random forests and compare their performance on some synthetic datasets.
 
-This time, the datasets will be provided by parameters of some functions. In the file the file `src/ex2_decision_boundaries.py` Implement the ``train_and_visualize_decision_boundaries()`` function by following these steps:
+This time, the datasets will be provided by parameters of some functions. In the file `src/ex2_decision_boundaries.py` implement the ``train_and_visualize_decision_boundaries()`` function by following these steps:
 
 1. Create a scatter plot of the dataset provided via the function parameters. Colorize the points according to their class membership (`c=targets`).
 2. Fit a decision tree classifier on the whole dataset using the `sklearn.tree` module and plot the tree. Look at the `sklearn.tree` module for help.
@@ -41,5 +41,17 @@ This time, the datasets will be provided by parameters of some functions. In the
 6. Repeat step 3 using the classifier from step 5. How do the decision boundaries of the random forest classifier differ from the ones described by the decision tree classifier?
 7. Make sure, your function returns the decision tree classifier and the random forest classifier you created - again using a dictionary.
 8. Play around with different values for `n_samples` and `noise` in `make_circles` and `make_moons`.
+
+### (Optional) Task 3: Custom Random Forest with Missing Values
+
+Now, we will implement our own random forest for classification that will be able to handle missing values. Navigate to the file `src/ex3_my_forest.py`.
+
+1. Implement the ``entropy()`` function.
+2. Now use your ``entropy()`` function to implement the ``information_gain()`` function.
+3. Next, use the implemented functions ``split()`` and``best_split()`` functions to find the best split and implement the function ``build_tree()`` to build a decision tree. Hint: You can use recursion for that. This function should return the resulting root node.
+4. Look at the class ``RandomForest`` and implement the ``fit()`` function including bootstrapping and random feature selection.
+5. Finally, implement the ``predict()`` function, that predicts on all of the resulting trees and returns a majority vote.
+6. You can now compare your results to the ``sklearn`` implementation of Random forest algorithm. 
+7. If you now uncomment the commented part in the ``main()`` function, you can experiment with missing values.
 
 

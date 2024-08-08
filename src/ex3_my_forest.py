@@ -41,7 +41,7 @@ def entropy(y):
     Returns:
     float: Entropy of the labels.
     """
-    # TODO: Implement me
+    # 1) TODO: Implement me
     return None
 
 def information_gain(y, y_left, y_right):
@@ -56,7 +56,7 @@ def information_gain(y, y_left, y_right):
     Returns:
     float: Information gain of the split.
     """
-    # TODO: Implement me
+    # 2) TODO: Implement me
     return None
 
 def split(X, y, feature_index, threshold):
@@ -123,7 +123,7 @@ def build_tree(X, y, features, depth=0, max_depth=None):
     Returns:
     DecisionNode or Leaf: Root node of the decision tree.
     """
-    # TODO: Implement me
+    # 3) TODO: Implement me
     return None
 
 def predict_sample(node, sample):
@@ -185,7 +185,7 @@ class RandomForest:
         X (array-like): Feature matrix.
         y (array-like): Labels.
         """
-        # TODO: Implement me
+        # 4) TODO: Implement me
 
     def predict(self, X):
         """
@@ -197,7 +197,7 @@ class RandomForest:
         Returns:
         array: Predicted class labels.
         """
-        # TODO: Implement me
+        # 5) TODO: Implement me
         return None
 
 if __name__ == "__main__":
@@ -206,7 +206,7 @@ if __name__ == "__main__":
     # Load wine dataset
     dataset = load_wine()
 
-    # Uncomment the following lines to introduce missing values
+    # 7) TODO: Uncomment the following lines to introduce missing values
     # missing_rate=0.1
     # mask = np.random.rand(*dataset.data.shape) < missing_rate
     # dataset.data[mask] = np.nan
@@ -235,4 +235,6 @@ if __name__ == "__main__":
     predictions = rf.predict(xtest)
     accuracy = np.mean(predictions == ytest)
     print(f'Accuracy_own: {accuracy}')
+
+    # 6) TODO: Compare your results to sklearn implementation 
 
