@@ -48,10 +48,9 @@ Now, we will implement our own random forest for classification that will be abl
 
 1. Implement the ``entropy()`` function.
 2. Now use your ``entropy()`` function to implement the ``information_gain()`` function.
-3. Next, use the implemented functions ``split()`` and``best_split()`` functions to find the best split and implement the function ``build_tree()`` to build a decision tree. Hint: You can use recursion for that. This function should return the resulting root node.
-4. Look at the class ``RandomForest`` and implement the ``fit()`` function including bootstrapping and random feature selection.
-5. Finally, implement the ``predict()`` function, that predicts on all of the resulting trees and returns a majority vote.
-6. You can now compare your results to the ``sklearn`` implementation of Random forest algorithm. 
-7. If you now uncomment the commented part in the ``main()`` function, you can experiment with missing values.
+3. Look at the class ``RandomForest`` and use the function ``build_tree()`` to implement the ``fit()`` function including bootstrapping and random feature selection.
+4. Finally, implement the ``predict()`` function, that predicts on all of the resulting trees and returns a majority vote.
+5. You can now compare your results to the ``sklearn`` implementation of Random forest algorithm. 
+6. If you now uncomment the commented part in the ``main()`` function, you can experiment with missing values.
 
 

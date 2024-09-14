@@ -123,8 +123,22 @@ def build_tree(X, y, features, depth=0, max_depth=None):
     Returns:
     DecisionNode or Leaf: Root node of the decision tree.
     """
-    # 3) TODO: Implement me
-    return None
+    if len(set(y)) == 1:  # If all labels are the same
+        return Leaf(y)
+    if max_depth is not None and depth >= max_depth:  # If maximum depth is reached
+        return Leaf(y)
+    split_result = best_split(X, y, features)
+    if split_result is None:  # If no valid split is found
+        return Leaf(y)
+    feature_index, threshold = split_result
+    X_left, X_right, y_left, y_right = split(X, y, feature_index, threshold)
+    left = build_tree(
+        X_left, y_left, features, depth + 1, max_depth
+    )  # Recursively build the left subtree
+    right = build_tree(
+        X_right, y_right, features, depth + 1, max_depth
+    )  # Recursively build the right subtree
+    return DecisionNode(feature_index, threshold, left, right)
 
 def predict_sample(node, sample):
     """
@@ -185,7 +199,7 @@ class RandomForest:
         X (array-like): Feature matrix.
         y (array-like): Labels.
         """
-        # 4) TODO: Implement me
+        # 3) TODO: Implement me
 
     def predict(self, X):
         """
@@ -197,7 +211,7 @@ class RandomForest:
         Returns:
         array: Predicted class labels.
         """
-        # 5) TODO: Implement me
+        # 4) TODO: Implement me
         return None
 
 if __name__ == "__main__":
@@ -206,7 +220,7 @@ if __name__ == "__main__":
     # Load wine dataset
     dataset = load_wine()
 
-    # 7) TODO: Uncomment the following lines to introduce missing values
+    # 6) TODO: Uncomment the following lines to introduce missing values
     # missing_rate=0.1
     # mask = np.random.rand(*dataset.data.shape) < missing_rate
     # dataset.data[mask] = np.nan
@@ -236,5 +250,5 @@ if __name__ == "__main__":
     accuracy = np.mean(predictions == ytest)
     print(f'Accuracy_own: {accuracy}')
 
-    # 6) TODO: Compare your results to sklearn implementation 
+    # 5) TODO: Compare your results to sklearn implementation 
 
