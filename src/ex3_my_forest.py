@@ -1,6 +1,5 @@
 import numpy as np
 from collections import Counter
-from scipy.stats import mode
 from sklearn import ensemble
 from sklearn.datasets import load_wine
 from sklearn.model_selection import train_test_split
@@ -62,6 +61,9 @@ def information_gain(y, y_left, y_right):
 def split(X, y, feature_index, threshold):
     """
     Split the dataset based on a feature and threshold.
+    Samples with a missing value in the split feature are assigned to the larger child,
+    so that no training data is discarded and the information gain is not biased
+    towards features with many missing values.
 
     Parameters:
     X (array-like): Feature matrix.
@@ -76,12 +78,15 @@ def split(X, y, feature_index, threshold):
     """
 
     mask = ~np.isnan(X[:, feature_index])  # Mask to handle missing values
-    X_valid = X[mask]  # Features without NaN
-    y_valid = y[mask]  # Corresponding labels without NaN
+    left_mask = mask & (X[:, feature_index] <= threshold)  # Non-missing samples for the left split
+    right_mask = mask & (X[:, feature_index] > threshold)  # Non-missing samples for the right split
 
-    left_indices = np.where(X_valid[:, feature_index] <= threshold)[0]  # Indices for the left split
-    right_indices = np.where(X_valid[:, feature_index] > threshold)[0]  # Indices for the right split
-    return X_valid[left_indices], X_valid[right_indices], y_valid[left_indices], y_valid[right_indices]
+    # Assign samples with missing values to the larger child
+    if left_mask.sum() >= right_mask.sum():
+        left_mask |= ~mask
+    else:
+        right_mask |= ~mask
+    return X[left_mask], X[right_mask], y[left_mask], y[right_mask]
 
 def best_split(X, y, features):
     """
@@ -109,7 +114,7 @@ def best_split(X, y, features):
                     best_split = (feature_index, threshold)
     return best_split
 
-def build_tree(X, y, features, depth=0, max_depth=None):
+def build_tree(X, y, features, depth=0, max_depth=None, n_features=None):
     """
     Build a decision tree.
 
@@ -119,6 +124,8 @@ def build_tree(X, y, features, depth=0, max_depth=None):
     features (array-like): List of feature indices to consider for splitting.
     depth (int, optional): Current depth of the tree. Default is 0.
     max_depth (int, optional): Maximum depth of the tree. Default is None.
+    n_features (int, optional): Number of features randomly drawn from ``features`` at each split.
+        Default is None (all features are considered).
 
     Returns:
     DecisionNode or Leaf: Root node of the decision tree.
@@ -127,17 +134,15 @@ def build_tree(X, y, features, depth=0, max_depth=None):
         return Leaf(y)
     if max_depth is not None and depth >= max_depth:  # If maximum depth is reached
         return Leaf(y)
-    split_result = best_split(X, y, features)
+    # Random feature selection at each split (random forest)
+    split_features = features if n_features is None else np.random.choice(features, n_features, replace=False)
+    split_result = best_split(X, y, split_features)
     if split_result is None:  # If no valid split is found
         return Leaf(y)
     feature_index, threshold = split_result
     X_left, X_right, y_left, y_right = split(X, y, feature_index, threshold)
-    left = build_tree(
-        X_left, y_left, features, depth + 1, max_depth
-    )  # Recursively build the left subtree
-    right = build_tree(
-        X_right, y_right, features, depth + 1, max_depth
-    )  # Recursively build the right subtree
+    left = build_tree(X_left, y_left, features, depth + 1, max_depth, n_features)  # Recursively build the left subtree
+    right = build_tree(X_right, y_right, features, depth + 1, max_depth, n_features)  # Recursively build the right subtree
     return DecisionNode(feature_index, threshold, left, right)
 
 def predict_sample(node, sample):
@@ -151,23 +156,29 @@ def predict_sample(node, sample):
     Returns:
     int: Predicted class label.
     """
+    return class_counts(node, sample).most_common(1)[0][0]  # Return the most common label
 
+def class_counts(node, sample):
+    """
+    Return the label counts of the leaf (or leaves) a sample reaches.
+
+    If the split feature of a node is missing, the sample is passed down both subtrees
+    and their label counts are summed, i.e. both branches are weighted by the number
+    of training samples they contain.
+
+    Parameters:
+    node (DecisionNode or Leaf): Root node of the decision tree.
+    sample (array-like): Feature values of the sample.
+
+    Returns:
+    Counter: Label counts.
+    """
     if isinstance(node, Leaf):  # If the node is a leaf
-        return node.predictions.most_common(1)[0][0]  # Return the most common label
-    
-    if np.isnan(sample[node.feature_index]): # If the feature is missing
-        left_prediction = predict_sample(node.left, sample) if node.left else None
-        right_prediction = predict_sample(node.right, sample) if node.right else None
-        
-        # Combine predictions from both child nodes, if available
-        if left_prediction is not None and right_prediction is not None:
-            left_count = node.left.predictions[left_prediction] if isinstance(node.left, Leaf) else 0
-            right_count = node.right.predictions[right_prediction] if isinstance(node.right, Leaf) else 0
-            return left_prediction if left_count > right_count else right_prediction
-        elif left_prediction is not None:
-            return left_prediction
-        else:
-            return right_prediction
+        return node.predictions
+
+    if np.isnan(sample[node.feature_index]):  # If the feature is missing
+        return class_counts(node.left, sample) + class_counts(node.right, sample)
+
     
     # Proceed with normal prediction if no missing value
     if sample[node.feature_index] <= node.threshold:  # If the feature value is less than or equal to the threshold

@@ -1,5 +1,6 @@
 """Test decision boundaries methods."""
 import numpy as np
+import sklearn.ensemble
 import sklearn.tree
 
 from src.ex2_decision_boundaries import (

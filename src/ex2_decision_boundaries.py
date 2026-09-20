@@ -1,4 +1,5 @@
 """Compare decision trees to random forests in classification and plot the decision boundaries of the classifiers."""
+
 from typing import List
 
 import matplotlib.pyplot as plt
@@ -62,10 +63,11 @@ def make_lines(
 
     The lines are ``line_distance`` units apart from each other and are rotated ``angle``
     (radians) w.r.t. to the x-axis. Normally distributed noise with standard deviation
-    ``x_noise`` is the x-coordinate of each sample.
+    ``x_noise`` is added to the x-coordinate of each sample.
 
     Returns:
-        tuple (np.ndarray, np.ndarray): Tuple with data of shape (300, 2) and labels of shape (300,).
+        tuple (np.ndarray, np.ndarray): Tuple with data of shape (n_lines * n_samples, 2)
+        and labels of shape (n_lines * n_samples,).
     """
     line_samples = np.random.random(n_lines * n_samples)
 
@@ -91,7 +93,8 @@ def make_circles(
     deviation ``noise`` is added to each sample.
 
     Returns:
-        tuple (np.ndarray, np.ndarray): Containing data of shape (1500, 2) and targets of shape (1500,).
+        tuple (np.ndarray, np.ndarray): Containing data of shape (n_samples * len(radii), 2)
+        and targets of shape (n_samples * len(radii),).
     """
     angle_samples = np.random.random(n_samples * len(radii)) * 2 * np.pi
     targets = np.repeat(np.arange(len(radii)), repeats=n_samples)
@@ -110,11 +113,14 @@ def make_spiral(
 ) -> tuple[np.ndarray, np.ndarray]:
     """Generate n spirals, where n is the length of the array ``radii``, with ``n_samples`` each.
 
-    The i-th spiral has radius ``radii[i]``. Normally distributed random noise with standard
-    deviation ``noise`` is added to each sample.
+    All spirals follow the curve r(t) = t**2, t in [0, 20), shifted by 3 in y-direction.
+    The i-th spiral is scaled by the factor ``radii[i]``; a negative factor mirrors it
+    through the origin (rotation by 180 degrees). Normally distributed random noise with
+    standard deviation ``1000 * noise`` is added to each sample.
 
     Returns:
-        tuple (np.ndarray, np.ndarray): Containing data and targets.
+        tuple (np.ndarray, np.ndarray): Containing data of shape (n_samples * len(radii), 2)
+        and targets of shape (n_samples * len(radii),).
     """
     noise *= 1000
     angle_samples = np.random.random(n_samples * len(radii)) * 20

@@ -23,8 +23,8 @@ We will now implement the `train_dt_and_rf` function to train decision trees and
 Take a look at your results and analyse them:
 
 8. Call your `train_dt_and_rf` function and get both the MSE curve of the decision trees from step 5 and the MSE curve of the random forests from step 6.
-8. Plot both MSE curves together in one figure (x-axis: maximum depth, y-axis: MSE).
-9. Look at the curve of the decision trees and how the MSE changes as the maximum depth increases. What do you observe? Why do you think this is happening? How does the curve of the random forests differ from the previous one? Why is this the case?
+9. Plot both MSE curves together in one figure (x-axis: maximum depth, y-axis: MSE).
+10. Look at the curve of the decision trees and how the MSE changes as the maximum depth increases. What do you observe? Why do you think this is happening? How does the curve of the random forests differ from the previous one? Why is this the case?
 
 
 ### Task 2: Visualising Decision Boundaries for Classification
@@ -35,7 +35,7 @@ This time, the datasets will be provided by parameters of some functions. In the
 
 1. Create a scatter plot of the dataset provided via the function parameters. Colorize the points according to their class membership (`c=targets`).
 2. Fit a decision tree classifier on the whole dataset using the `sklearn.tree` module and plot the tree. Look at the `sklearn.tree` module for help.
-3. Create a ``DecisionBoundaryDisplay`` using the ``sklearn.inspection.DecisionBoundaryDisplay.from_estimator`` function and use `vmax=2/0.29`, `cmap=plt.cm.tab10` and `response_method="predict"`. To show the data points in the same plot, you can call the ``ax_.scatter()`` method of the display you created and use it like ``plt.scatter()`` before you call ``plt.show()``. In `ax_.scatter()` set `vmax=2/0.29` and `cmap=plt.cm.tab10` as well. This way, all the plots should use the same colors.
+3. Create a ``DecisionBoundaryDisplay`` using the ``sklearn.inspection.DecisionBoundaryDisplay.from_estimator`` function and use `vmax=2/0.29` and `cmap=plt.cm.tab10`. To show the data points in the same plot, you can call the ``ax_.scatter()`` method of the display you created and use it like ``plt.scatter()`` before you call ``plt.show()``. In `ax_.scatter()` set `vmax=2/0.29` and `cmap=plt.cm.tab10` as well. This way, all the plots should use the same colors.
 4. If you run the script with `python ./src/ex2_decision_boundaries.py`, you will see that your function will be called with five different datasets: vertical lines, diagonal lines, nested circles, half-moons and spirals. Do the decision trees created by the datasets have different complexities? If yes, why do you think is that the case?
 5. Now train a random forest classifier from `sklearn.ensemble` on the whole data.
 6. Repeat step 3 using the classifier from step 5. How do the decision boundaries of the random forest classifier differ from the ones described by the decision tree classifier?
@@ -48,9 +48,10 @@ Now, we will implement our own random forest for classification that will be abl
 
 1. Implement the ``entropy()`` function.
 2. Now use your ``entropy()`` function to implement the ``information_gain()`` function.
-3. Look at the class ``RandomForest`` and use the function ``build_tree()`` to implement the ``fit()`` function including bootstrapping and random feature selection.
-4. Finally, implement the ``predict()`` function, that predicts on all of the resulting trees and returns a majority vote.
-5. You can now compare your results to the ``sklearn`` implementation of Random forest algorithm. 
-6. If you now uncomment the commented part in the ``main()`` function, you can experiment with missing values.
+3. Next, use the implemented functions ``split()`` and``best_split()`` functions to find the best split and implement the function ``build_tree()`` to build a decision tree. Hint: You can use recursion for that. This function should return the resulting root node.
+4. Look at the class ``RandomForest`` and implement the ``fit()`` function including bootstrapping and random feature selection.
+5. Finally, implement the ``predict()`` function, that predicts on all of the resulting trees and returns a majority vote.
+6. You can now compare your results to the ``sklearn`` implementation of Random forest algorithm. 
+7. If you now uncomment the commented part in the ``main()`` function, you can experiment with missing values.
 
 
